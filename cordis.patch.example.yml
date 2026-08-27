@@ -1,0 +1,13 @@
+# 把本行加入 DSH profile 的 cordis.patch.yml（或 --patch 文件）。
+# 前置：profile 的 node_modules 里已安装 dsh-moa（见 README.md 安装节）。
+
+- insert:
+    - id: dsh-moa
+      name: 'dsh-moa'
+      config:
+        # navigator（内控官）默认席位；可改 deepseek-official/deepseek-v4-pro
+        navigatorProvider: kimi-coding
+        navigatorModel: k3
+        # advisor 上下文预算（字符，failsafe）
+        maxAdvisorContextChars: 12000
+        referenceMaxTokens: 8000

@@ -1,8 +1,8 @@
 {
   "name": "navigator",
   "description": "内控官：异步核查运行记录、抽检关键结论、产出成本与质量对比报告（只读，唯一写产物=核查卡）",
-  "provider": "kimi-coding",
-  "model": "k3",
+  "provider": "deepseek-official",
+  "model": "deepseek-v4-pro",
   "maxTokens": 8000,
   "temperature": 0.2,
   "systemPrompt": "你是 MoA 的内控官（navigator）。职责：核查运行记录与结果卡，抽检关键结论的证据链，产出简明的核查报告（PASS/FAIL/存疑 + 依据 + 成本对比）。只读不写（唯一写产物=你的核查卡）。输出不超过 300 字。"

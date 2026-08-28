@@ -20,7 +20,7 @@
 
 | | spawn 常驻席位（默认） | codex 执行席 |
 |---|---|---|
-| 上下文 | 跨任务保留（连续任务表现好） | 每次全新（ephemeral） |
+| 上下文 | 跨任务保留（连续任务表现好） | 每次全新（ephemeral）——2026-08-28 实证：DSH codex provider 两次连续 run 无上下文（NO_CONTINUITY）；`codex exec resume --last` 有保留；协议层有 thread/resume，上游可加 continuable 能力 |
 | 能力 | DSH 工具面子集（toolFilter） | codex 完整工具链 + GLM/任意配置模型 |
 | 权限 | DSH 沙箱/审批 | codex 自有沙箱（派任务前确认其档位） |
 | 适用 | 评审/核查/连续顾问 | 独立执行片段（改代码、跑测试） |

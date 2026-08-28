@@ -1,70 +1,93 @@
-# DSH-MOA
+# dsh-moa 🐙
 
-**Mixture-of-Agents runtime for [DeepSeek Harness](https://www.npmjs.com/package/@deepseek-ai/dsh) (DSH).**
+**dsh-moa 是 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）上的多模型协同运行时（Mixture-of-Agents）：主模型纯 GUI 选择做 captain，DSH 注册的每个模型都能做子模型，常驻席位跨任务保留上下文，异构 codex 席位接入 GLM，navigator 内控官异步核查。**
 
-主模型纯 GUI 选择，DSH 注册的每个模型都可做子模型，异步 Navigator（内控官）独立核查。
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) · [![Version: 0.2.0](https://img.shields.io/badge/version-0.2.0-blue.svg)](CHANGELOG.md)
+
+## 它是什么
+
+一句话：**把"一个模型从头干到尾"改成"你选的 captain 调度 + 多模型席位对抗/执行 + 内控官核查"**。
 
 - **主模型不钉定**：你在主界面正常选模型，那个模型就是 captain/聚合器——本插件从不切换或覆盖你的选择。
-- **子模型任意注册**：roster 角色文件制，DSH 里注册过的任何模型都能绑到 advisor 席位（analyst/critic/devil/navigator…），加一个 JSON 文件即注册新角色。
-- **评审融合工具 `moa`**：并行调度多个子模型 advisor 出独立意见（无工具 `llm.stream` 直调，便宜），主模型聚合裁决。
-- **异步 Navigator（内控官）**：独立角色核查运行记录、抽检关键结论、产出成本对比（默认 kimi-k3，可切 deepseek-v4-pro）。
-- **`/moa` 命令**：人机命令随时查看与切换（`status | roles | navigator <provider/model>`）。
+- **子模型任意注册**：roster 角色文件制（包内默认 + `~/.dsh/moa/roles/` 用户层覆盖），加一个 JSON 文件即注册新角色/新模型。
+- **自动调度矩阵**：不指定席位时，插件按 模型特性 × 任务类型 × 成本 自动分派（常规=v4-flash / 高 stakes=v4-pro / 视觉=v4-flash-vision-exp / devil 恒跨家族=k3）。
+- **常驻席位进程**：同一席位跨任务保留进程与上下文（续任务带着上轮记忆），冷恢复跨重启存续。
+- **异构 codex 席位**：GLM 家族经 codex runtime 接入（独立 agent runtime，自带沙箱与工具链）。
+- **navigator 内控官**：任务收官后按风险分层自动核查（全过必审/高 stakes 必审），产出核查卡与成本对比。
 
-移植自 [pi-moa](https://www.npmjs.com/package/@duyviet1804/pi-moa)（MIT）并借鉴 [openai/codex](https://github.com/openai/codex) 的角色文件与内控官设计、北大 DCAI [DataFlow-Harness](https://github.com/OpenDCAI/DataFlow-webui) 的 live-registry grounding。
+## 解决什么痛点
 
-## 架构（v0.2：常驻席位进程制）
+1. **单模型盲区**——同模型自审等于没审。解法：跨家族对抗（devil=k3）+ 对抗立场 prompt + 独立上下文。
+2. **旗舰模型干机械活**——解法：成本分层（flash 档承包、pro 档承接难片、captain 只做裁决），峰谷时段提示。
+3. **多模型集成的假多样性**——解法：真异构（家族差异+档位差），审查者档位 ≥ 被审者（stakes=high 时 critic 自动升 v4-pro）。
+4. **纯路由无治理**——解法：黑板协议全程留痕（`.pi/moa/<task-id>/` 结果卡）+ navigator 内控核查 + 成本估算台账。
+
+## 30 秒理解架构
 
 ```
-主模型（GUI 选择 = captain）
-  │ 任务设计/拆分（前提）：moa(task, seats=[{role, provider, model, focus}])
-  ├─ analyst 席 ─ durable 子代理（跨任务保留进程与上下文）
-  ├─ critic 席 ── durable 子代理（同上；模型按任务指派，不固定）
-  └─ devil 席 ─── durable 子代理（同上）
-       ↓ 黑板协议：各席把结果卡写到 .pi/moa/<task-id>/results/<role>.md
-  主模型读卡 → 聚合裁决 →（批扩写则 allowLong 续跑）
+你（DSH 主会话 · GUI 选主模型 = captain，插件永不钉定）
+  │ 任务设计/拆分（前提）：moa(task, mode, seats?)
+  ▼
+moa 工具 ── 自动调度矩阵（特性×任务×成本）
+  ├─ 常驻评审席（spawn continuable，跨任务保留上下文，冷恢复跨重启）
+  │     analyst/critic（v4-flash）· devil（k3 跨家族）· stakes=high 时 critic→v4-pro
+  ├─ 异构执行席（codex runtime，ephemeral 一次性）
+  │     executor-glm-flash / executor-glm（GLM 经 codex，自带沙箱）
+  └─ 视觉席 vision-check（v4-flash-vision-exp）
+       │ 任务卡 → 结果卡（黑板 .pi/moa/<task-id>/results/；星型拓扑，席位间不直连）
+       ▼
+captain 读卡 → 聚合裁决 →（全过/高 stakes 必审）
+       ▼
+navigator 内控（v4-pro 异步）── navigator.md 核查卡 · tokens_by_model · cost_estimate（估算标注）
 ```
-
-五条设计裁定（2026-08-27 用户确认）：
-
-1. **席位不固定模型**：roster 只给默认；主模型按任务设计/拆分经 `seats` 参数指派任何已注册模型；
-2. **独立意见 ≤500 字**：超限席位在结果卡末尾写【申请扩写：理由】，主模型用 `allowLong` 批准续跑（≤2000 字）；
-3. **主/子模型都可派出 agent，子模型不可再调子模型**：toolFilter 剥夺全部委派类工具 + maxDepth=父深度+1（双保险）；
-4. **进程与上下文保留**：席位是 durable continuable 子代理——同一席位跨任务接续（思考不浪费），冷恢复跨 DSH 重启存续，`/moa seats` 查看、`/moa reset` 重置；
-5. **思考能力按席位配置**：`reasoningEffort` 写入角色文件/seats 参数——llm.stream 通道（fast=true）直接生效；子代理通道当前受 AgentOptions 限制（仅 provider/model/maxTokens），以配置记录+提示词承载。
-
-`fast=true` 时回到无状态 llm.stream 单发通道（省费快，不保留席位上下文）。
 
 ## 安装
 
 ```bash
-# 1. 把包装进某个 profile（假设你已 clone 本仓库）
-dsh plugin --profile web add /path/to/dsh-moa
-# 或发布到 npm 后：dsh plugin --profile web add dsh-moa
+# 1. 安装到 profile（本地路径或 npm）
+dsh plugin --profile web add /path/to/dsh-moa     # 或 dsh plugin --profile web add dsh-moa
 
-# 2. 在该 profile 的 cordis.patch.yml 加入（见 cordis.patch.example.yml）
+# 2. profile 的 cordis.patch.yml 加入（见 cordis.patch.example.yml）
 - insert:
     - id: dsh-moa
       name: 'dsh-moa'
 
-# 3. 重启该 profile
-dsh --profile web
+# 3. （可选）异构 codex 席位：装后端 + patch 行
+dsh plugin --profile web add @deepseek-ai/dsh-subagent-codex
+- insert:
+    - id: subagent-codex
+      name: '@deepseek-ai/dsh-subagent-codex'
+
+# 4. 重启该 profile
 ```
+
+要求：DSH ≥ 0.1.2-alpha.1（每席位 reasoningEffort 需要该版本；更早版本自动降级忽略）。
 
 ## 使用
 
 ```
-# 模型可见的 moa 工具（主 agent 在适当时机调用）
-moa(task="评审这份方案", mode="review", context_files=["10-工作区/x.md"], writeResultCard=true)
+# 最简：一句话（自动调度矩阵选席位）
+用 moa 评审一下 10-工作区/xxx.md
+
+# 模型可见的 moa 工具参数
+task / mode(review|research|write|dev-backend|dev-frontend|test|audit)
+seats=[{role, provider?, model?, focus?}]   # 按任务指派（任何已注册模型）
+stakes="high"                                # critic 自动升 v4-pro
+fast=true                                    # 无状态 llm.stream 单发通道（省费）
+allowLong=true                               # 批准席位扩写（≤2000字）
+context_files=[...]                          # 材料白名单（工作区相对路径）
 
 # 人机命令（模型不可见）
-/moa status                     # providers、navigator、roster 席位
-/moa roles                      # 全部角色文件
-/moa navigator kimi-coding/k3   # 切换内控官席位
+/moa status    # providers · 调度矩阵 · roster · 席位池 · navigator
+/moa roles     # 全部角色文件
+/moa seats     # 常驻席位进程池
+/moa reset [key]                 # 重置席位
+/moa navigator <provider/model>  # 切换内控官席位
 ```
 
 ## roster 角色文件
 
-包内默认角色在 `roles/`（analyst/critic/devil/navigator）。用户层目录 `~/.dsh/moa/roles/` 下的同名 JSON **覆盖**包内角色，新文件名即新角色：
+包内默认在 `roles/`（analyst/critic/devil/navigator/executor-pro/architect-k3/vision-check/executor-glm-flash/executor-glm/executor-codex）。用户层 `~/.dsh/moa/roles/` 同名覆盖、新文件即新角色：
 
 ```json
 {
@@ -73,38 +96,32 @@ moa(task="评审这份方案", mode="review", context_files=["10-工作区/x.md"
   "provider": "deepseek-official",
   "model": "deepseek-v4-pro",
   "maxTokens": 16000,
-  "temperature": 0.2,
+  "reasoningEffort": "high",
   "systemPrompt": "你是 MoA 评审的 critic-pro 席……"
 }
 ```
 
-生效白名单：`name/description/provider/model/maxTokens/temperature/systemPrompt`——角色只能做减法，sandbox/approval 永远继承父会话。
-
-## 配置（cordis.patch.yml config 段）
-
-| 键 | 默认 | 说明 |
-|---|---|---|
-| `rolesDir` | `~/.dsh/moa/roles` | 用户层角色文件目录 |
-| `navigatorProvider` / `navigatorModel` | `kimi-coding` / `k3` | 内控官席位（可改 `deepseek-official`/`deepseek-v4-pro`） |
-| `maxAdvisorContextChars` | `12000` | advisor 上下文预算 failsafe（字符） |
-| `referenceMaxTokens` | `8000` | 每席位输出上限 |
-| `referenceTemperature` | `0.2` | advisor 温度 |
-| `resultCardDir` | `.pi/moa` | 结果卡目录（工作区相对路径） |
+生效白名单：`name/description/provider/model/maxTokens/temperature/systemPrompt/tools/reasoningEffort/runtime`——角色只能做减法；sandbox/approval 永远继承父会话；`runtime:"codex"` 走异构通道。
 
 ## 治理边界
 
-- 本会话产出 = 读、分析、起草；工程执行不归本插件。
-- 发往 advisor 的上下文经过双层脱敏（值库 + 模式）；`context_files` 白名单限定在工作区内读取。
-- 结果卡 `createIfAbsent`，不覆盖既有文件；成本字段一律标注"估算"。
-- 凭证复用 DSH 已配置的 llm adapter 路由，本插件不新增任何凭证字段。
+- 本会话产出 = 读、分析、起草；工程执行归 codex 席位（它自己的 sandbox 承担）或人工。
+- 发往席位的材料双层脱敏（值库+模式）；`context_files` 白名单 realpath 限定工作区内；
+- 席位不可再派子代理（toolFilter + maxDepth 双保险）；结果卡 `wx` 防覆盖；
+- 凭证复用 DSH 已配置的 llm adapter / codex 自身配置，本插件不新增凭证字段；
+- 成本字段一律标注"估算"（价格表峰谷版，附录见 docs/）。
 
 ## Roadmap
 
-- v0.1：roster + moa 工具 + /moa 命令（本版）
-- v0.2：navigator 异步巡航（startContinuable）+ 抽检/核查 + 成本周报
-- v0.3：门控层（checkpoint/final 有序 fallback、fail-closed）
-- v0.4：workflow batch 子模式 + telemetry
+- v0.1：roster + moa 工具 + /moa 命令 ✅
+- v0.2：常驻席位池 + 自动调度矩阵 + codex 异构席 + Sprint 1/2 加固 ✅
+- v0.3（本版）：navigator 在线化（收官自动内控）+ reasoningEffort 双通道 ✅
+- v0.4：workflow batch 子模式 · telemetry 周报 · 上游 continuable codex provider（见 docs/continuable-codex-provider-issue.md）
+
+## Credits
+
+移植与借鉴：[pi-moa](https://www.npmjs.com/package/@duyviet1804/pi-moa)（MIT）、[openai/codex](https://github.com/openai/codex)（角色文件/Guardian 内控官）、[DataFlow-Harness](https://github.com/OpenDCAI/DataFlow-webui)（live-registry grounding）、[pi-moa 双平面实践](https://github.com/)（三卡协议/调度矩阵/门禁分级）。
 
 ## License
 
-MIT（与 pi-moa 一致）
+MIT

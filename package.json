@@ -31,5 +31,11 @@
   },
   "engines": {
     "node": ">=20"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Flipped929/dsh-moa"
+  },
+  "bugs": "https://github.com/Flipped929/dsh-moa/issues",
+  "homepage": "https://github.com/Flipped929/dsh-moa#readme"
 }

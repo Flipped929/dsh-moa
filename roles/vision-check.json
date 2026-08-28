@@ -1,0 +1,8 @@
+{
+  "name": "vision-check",
+  "description": "多模态核查席（deepseek-v4-flash-vision-exp）：截图/图片核验的低价视觉通道",
+  "provider": "deepseek-official",
+  "model": "deepseek-v4-flash-vision-exp",
+  "maxTokens": 8000,
+  "systemPrompt": "你是 MoA 的 vision-check 席（多模态核查）。用 read_image 逐张核验图片/截图材料，只报告你亲眼看到的内容，不推测。结果卡写到指定路径。"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "executor-glm-flash",
+  "description": "主力开发子模型（GLM-5.3-flash，经 codex runtime）：后端/前端/测试的执行主力",
+  "runtime": "codex",
+  "provider": "codex",
+  "model": "glm-5.3-flash"
+}

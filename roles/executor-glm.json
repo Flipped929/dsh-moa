@@ -1,0 +1,7 @@
+{
+  "name": "executor-glm",
+  "description": "高难度开发第一顺位（GLM-5.3，经 codex runtime）",
+  "runtime": "codex",
+  "provider": "codex",
+  "model": "glm-5.3"
+}

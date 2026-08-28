@@ -1,0 +1,7 @@
+{
+  "name": "executor-codex",
+  "description": "codex 异构执行席：独立 agent runtime（自带沙箱/工具链），适合边界明确的执行片段",
+  "runtime": "codex",
+  "provider": "codex",
+  "model": "codex"
+}

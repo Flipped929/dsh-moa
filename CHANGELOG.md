@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.2 (2026-09-02)
+
+- fix: package exports 开放 `./lib/*` 子路径——smoke.mjs 的 roster 探测此前因 `Package subpath './lib/roster.js' is not defined by "exports"` 而 FAIL（alpha.4 升级实测中发现，升级韧性流程起效）
+- 实证记录（alpha.4 + v0.3.1）：三 DSH provider 通道全部跑通——GLM-5.3-flash/GLM-5.3/kimi-k3 fast 直连 ✅；GLM-flash spawn 常驻席位 moa 全流程（任务卡→结果卡→完成通知）✅；navigator 异步内控派发 ✅；smoke 5/5 ✅
+
 ## 0.3.1 (2026-09-02)
 
 - 视觉辅助席（用户裁定）：有视觉材料的任务在 analyst 席（k3）之外追加 `vision-aux` 子代理（DeepSeek-V4-flash-vision-exp，官方多模态），与 k3 并行读图交叉核验；audit 等无 analyst 阵容不追加

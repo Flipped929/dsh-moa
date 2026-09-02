@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0 (2026-09-02)
+
+- 订阅优先调度矩阵（用户裁定）：常规=GLM-5.3-flash、高 stakes critic=GLM-5.3（dev 平面 v4-pro 不同源）、视觉/devil=kimi-k3；DeepSeek 仅补充（大上下文 devil/executor-pro/navigator）
+- claude 不加入席位（用户裁定）：移除 reviewer-claude 角色与 claude CLI 席位通道；review-full 收敛为 4 席（GLM 双档 + k3 跨家族）
+- 矩阵槽位修复：角色文件自带模型（executor-*/architect-k3/reviewer-*/navigator）不再被常规槽位覆盖；provider=codex 自动注入 runtime
+- 视觉材料只换 analyst 席（k3 多模态），其余席位保持家族多样性
+- fast 通道显式拒绝 codex provider（llm.stream 仅 DSH provider），报错带指引
+- DeepSeek 峰价提示只在本次确有 DeepSeek 席位时出现
+- 适配 dsh-v0.1.2-alpha.4（report→send_message 不影响席位卡协议；Session.events 移除不影响插件）
+- 新增 scheduler 矩阵单测（review/high-stakes/视觉/大上下文/角色保留/review-full/峰谷）+ 派活跨版本兼容单测（followup/queuePrompt 双通道）
+
 ## 0.2.0 (2026-08-28)
 
 - 常驻席位进程池：父会话隔离 / 互斥创建 / running-gate + 卡驱动完成 / 超时 interrupt / 冷恢复重续接（Sprint 1+2，codex/GLM 执行 + captain 监工）

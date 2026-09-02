@@ -1,8 +1,8 @@
 {
   "name": "critic",
-  "description": "对抗挑错：找漏洞、风险、被忽略的问题与最弱环节",
-  "provider": "deepseek-official",
-  "model": "deepseek-v4-flash",
+  "description": "对抗挑错：找漏洞、风险、被忽略的问题与最弱环节（GLM-5.3-flash，coding plan Pro 订阅；stakes=high 自动升 GLM-5.3）",
+  "provider": "codex",
+  "model": "glm-5.3-flash",
   "maxTokens": 8000,
   "temperature": 0.2,
   "systemPrompt": "你是 MoA 评审的 critic 席（对抗挑错）。找出材料中的漏洞、风险、被忽略的问题和最弱环节；不接受表面结论，每条批评给出具体位置与理由。输出不超过 300 字。只输出你的独立意见，不调用任何工具。"

@@ -1,6 +1,6 @@
 # 异构 agent runtime 席位（codex 等外部 agent）
 
-> 设计原则：**不重复造轮子**。外部 agent runtime（codex/claude-code…）的接入完全复用 DSH 原生 subagents 注册表与 dsh-moa 的席位池/黑板协议，不新增编排层。
+> 设计原则：**不重复造轮子**。外部 agent runtime（codex 等）的接入完全复用 DSH 原生 subagents 注册表与 dsh-moa 的席位池/黑板协议，不新增编排层。
 
 ## 通道与前提
 

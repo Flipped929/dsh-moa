@@ -32,7 +32,7 @@ subagents.startContinuable({
   signal,
 })
 // → durable childId bound to ONE persistent app-server process + ONE non-ephemeral Codex thread
-subagents.followup(parent, childId, content, options)
+subagents.followup(parent, childId, content, options) // DSH ≤0.1.2-alpha.3；≥alpha.4 为 Symbol.for('dsh.subagent.queuePrompt') 宿主通道
 // → resumes/continues the SAME thread (thread/resume or turn/start on the retained thread id)
 ```
 
@@ -48,7 +48,7 @@ subagents.followup(parent, childId, content, options)
 
 1. Keep a per-seat app-server process alive (keyed by durable child id) instead of per-run; reuse the existing process-tree ownership/termination tiers.
 2. `thread/start` with `ephemeral: false` on first start; persist the thread id in the child descriptor.
-3. `followup` → `thread/resume` (cold path) or `turn/start` on the retained thread (resident path).
+3. `followup`（≤alpha.3）/ `queuePrompt`（≥alpha.4）→ `thread/resume` (cold path) or `turn/start` on the retained thread (resident path).
 4. Lifecycle parity with spawn continuable children: residency eviction (persist → shutdown → reload on demand), `listChildren`/`listDescendants` compatibility.
 
 ## Backward compatibility

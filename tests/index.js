@@ -3,3 +3,5 @@ import './redact.test.js';
 import './safe-read.test.js';
 import './slug.test.js';
 import './codex-cli.test.js';
+import './scheduler.test.js';
+import './seats-compat.test.js';

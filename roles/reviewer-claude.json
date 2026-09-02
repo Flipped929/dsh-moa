@@ -1,6 +1,6 @@
 {
   "name": "reviewer-claude",
-  "description": "第三家族评审席（claude-code runtime）：三家族对抗评审的 claude 视角，带真实成本记账",
+  "description": "claude 通道评审席（注意：当前 claude CLI 经 ccswitch 代理实际跑 deepseek-v4-pro，非第三家族；要真 claude 需切 X-Code API 通道）",
   "runtime": "claude-code",
   "provider": "claude-code",
   "model": "claude-code"

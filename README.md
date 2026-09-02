@@ -111,6 +111,22 @@ context_files=[...]                          # 材料白名单（工作区相对
 - 凭证复用 DSH 已配置的 llm adapter / codex 自身配置，本插件不新增凭证字段；
 - 成本字段一律标注"估算"（价格表峰谷版，附录见 docs/）。
 
+## DSH 版本升级时的兼容性
+
+插件按"能力自检 + 优雅降级"设计：升级后挂载时逐项探测依赖契约（llm/tools/subagents/commands/sandboxPolicy），缺什么降级什么并在日志里明说，绝不因契约变动拖死宿主。
+
+升级后两步自查：
+
+```bash
+# 1. 挂载行还在吗（升级掉 patch 行是实证过的事故）
+scripts/ensure-mount.sh web        # 幂等恢复，缺了才写
+
+# 2. 契约还兼容吗
+cd ~/.dsh/profiles/web && node ~/Projects/dsh-moa/scripts/smoke.mjs
+```
+
+实测兼容：0.1.2-alpha.1 / 0.1.2-alpha.2。`reasoningEffort` 席位档位需 ≥ 0.1.2-alpha.1（更早版本自动忽略该字段）。
+
 ## Roadmap
 
 - v0.1：roster + moa 工具 + /moa 命令 ✅

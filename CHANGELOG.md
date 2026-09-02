@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.5 (2026-09-02)
+
+- **fix：图片材料任务卡措辞强化**——常驻席位任务卡的图片材料从"请自行查看"改为"必须用 read_image 读取此指定路径，禁止自选其他文件替代"（实证事故：vision-exp 席位在 A/B 多模态题中未读指定图而自行 glob 了三张合同图，OCR 质量虽好但对象错误）
+- vision-check 角色 prompt 同步强化（指定路径纪律 + 无图像输入能力时 failed 并注明原因）
+- 实证发现记录：GLM-5.3-flash 多模态需在 DSH 模型配置补 `inputModalities: [text, image]`（否则 read_image 报 "does not declare image input"）；vision-exp 在 fast 通道疑因 deepseek 官方配置 thinking=max 导致短任务偶发空产出（5 战 4 败），fast 短任务建议用 GLM-flash/k3
+
 ## 0.3.4 (2026-09-02)
 
 - **高 stakes critic 回滚 v4-pro**（A/B 双跑实证）：52 目录 3 个历史难评审任务双跑 glm-5.3 vs v4-pro 单席 critic，四维评判（具体性/证据准确性/重要性/可操作性）**v4-pro 3:0 胜**——glm-5.3 胜率 0% 触发预设回滚判据（<60%）；deepModel 槽位移除，常规 critic 仍 GLM-flash 订阅不变

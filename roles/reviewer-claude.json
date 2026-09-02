@@ -1,0 +1,7 @@
+{
+  "name": "reviewer-claude",
+  "description": "第三家族评审席（claude-code runtime）：三家族对抗评审的 claude 视角，带真实成本记账",
+  "runtime": "claude-code",
+  "provider": "claude-code",
+  "model": "claude-code"
+}

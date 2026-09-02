@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.4 (2026-09-02)
+
+- **高 stakes critic 回滚 v4-pro**（A/B 双跑实证）：52 目录 3 个历史难评审任务双跑 glm-5.3 vs v4-pro 单席 critic，四维评判（具体性/证据准确性/重要性/可操作性）**v4-pro 3:0 胜**——glm-5.3 胜率 0% 触发预设回滚判据（<60%）；deepModel 槽位移除，常规 critic 仍 GLM-flash 订阅不变
+- navigator 交叉核查背书：题 1 glm 卡 PASS（6/6 属实）；题 3 v4-pro 卡 PASS（含一处"锚点可疑"批评被源码反证的自纠错记录）
+- GLM-5.3 保留为 review-full 的 GLM 家族深审视角（roster 自带，非高 stakes critic 槽位）
+- 调度矩阵单测 23/23 绿（高 stakes 断言改为两平面统一 v4-pro）
+
 ## 0.3.3 (2026-09-02)
 
 - **GLM 评审席 spawn 常驻化**（用户裁定）：analyst/critic/reviewer-glm/reviewer-glm-flash 与矩阵 cheapModel/deepModel 槽位从 codex CLI 改回 DSH spawn 常驻（`zai-coding-cn` provider）——alpha.4 实证 GLM 直连 spawn 全流程（进程保留 + 席位自写卡 + DSH 工具面 read/grep/glob/read_image）

@@ -20,7 +20,6 @@ const roster = new Map(Object.entries({
 
 const resolved = {
   cheapModel: 'zai-coding-cn/glm-5.3-flash',
-  deepModel: 'zai-coding-cn/glm-5.3',
   visionModel: 'kimi-coding/k3',
   proModel: 'deepseek-official/deepseek-v4-pro',
   devilModel: 'kimi-coding/k3',
@@ -35,12 +34,11 @@ test('review 三席：analyst/critic=GLM-flash(spawn 常驻)、devil=k3 跨家�
   ]);
 });
 
-test('high stakes：review 平面 critic 升 GLM-5.3（spawn）；dev 平面升 v4-pro（与 executor=glm 不同源）', () => {
+test('high stakes：critic 升 v4-pro（2026-09-02 A/B 双跑 0:3 实证回滚，两平面一致）', () => {
   const r = assignSeats({ mode: 'review', stakes: 'high', needVision: false, bigContextChars: 0 }, resolved, roster);
   const critic = r.find((s) => s.role === 'critic');
-  assert.equal(critic.provider, 'zai-coding-cn');
-  assert.equal(critic.model, 'glm-5.3');
-  assert.equal(critic.runtime, undefined);
+  assert.equal(critic.provider, 'deepseek-official');
+  assert.equal(critic.model, 'deepseek-v4-pro');
   const d = assignSeats({ mode: 'dev-backend', stakes: 'high', needVision: false, bigContextChars: 0 }, resolved, roster);
   const dCritic = d.find((s) => s.role === 'critic');
   assert.equal(dCritic.provider, 'deepseek-official');
@@ -101,10 +99,10 @@ test('review-full 为 4 席（claude 不加入席位）：GLM 双档 spawn + k3 
   assert.equal(glm.runtime, undefined);
 });
 
-test('describeMatrix 反映订阅优先五槽位（GLM spawn）', () => {
+test('describeMatrix 反映订阅优先槽位（GLM spawn；高 stakes critic=v4-pro 实证回滚）', () => {
   const text = describeMatrix(resolved);
   assert.match(text, /常规席=zai-coding-cn\/glm-5\.3-flash/);
-  assert.match(text, /高stakes critic=zai-coding-cn\/glm-5\.3/);
+  assert.match(text, /高stakes critic=deepseek-official\/deepseek-v4-pro/);
   assert.match(text, /视觉席=kimi-coding\/k3/);
   assert.match(text, /DeepSeek 补充=deepseek-official\/deepseek-v4-pro/);
 });

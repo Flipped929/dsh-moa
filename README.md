@@ -26,7 +26,7 @@
 
 1. **单模型盲区**——同模型自审等于没审。解法：跨家族对抗（devil=k3）+ 对抗立场 prompt + 独立上下文。
 2. **旗舰模型干机械活**——解法：成本分层（GLM/k3 订阅额度承包、DeepSeek 只接难片与内控、captain 只做裁决），DeepSeek 峰谷时段提示。
-3. **多模型集成的假多样性**——解法：真异构（家族差异+档位差），审查者档位 ≥ 被审者（stakes=high 时 critic 升 GLM-5.3；dev 平面 executor=glm 时 critic 强制 v4-pro 防同源自审）。
+3. **多模型集成的假多样性**——解法：真异构（家族差异+档位差），审查者档位 ≥ 被审者（stakes=high 时 critic 升 v4-pro——2026-09-02 A/B 双跑实证：glm-5.3 深审三题全败，按预设判据回滚）。
 4. **纯路由无治理**——解法：黑板协议全程留痕（`.pi/moa/<task-id>/` 结果卡）+ navigator 内控核查 + 成本估算台账。
 
 ## 30 秒理解架构
@@ -38,7 +38,7 @@
 moa 工具 ── 自动调度矩阵（订阅优先：特性×任务×成本）
   ├─ 常驻评审席（spawn continuable，跨任务保留上下文，冷恢复跨重启）
   │     analyst/critic（GLM-5.3-flash · zai-coding-cn 直连）· devil（k3 跨家族）
-  │     stakes=high 时 critic→GLM-5.3（review 平面）
+  │     stakes=high 时 critic→v4-pro（A/B 双跑实证回滚）
   ├─ 异构执行席（codex runtime · GLM 订阅 · 自带沙箱）
   │     executor-glm-flash / executor-glm · architect-k3（视觉走查）
   └─ DeepSeek 补充席：executor-pro（难片二顺位）· navigator（内控 v4-pro 异步）
@@ -81,7 +81,7 @@ dsh plugin --profile web add @deepseek-ai/dsh-subagent-codex
 # 模型可见的 moa 工具参数
 task / mode(review|research|write|dev-backend|dev-frontend|test|audit|review-full)
 seats=[{role, provider?, model?, focus?}]   # 按任务指派（任何已注册模型）
-stakes="high"                                # critic 自动升 GLM-5.3（dev 平面升 v4-pro）
+stakes="high"                                # critic 自动升 v4-pro（A/B 双跑实证回滚）
 fast=true                                    # 无状态 llm.stream 单发通道（仅 DSH provider）
 allowLong=true                               # 批准席位扩写（≤2000字）
 context_files=[...]                          # 材料白名单（工作区相对路径）
@@ -117,10 +117,11 @@ context_files=[...]                          # 材料白名单（工作区相对
 | 档位 | 模型 | 通道 | 成本口径 |
 |---|---|---|---|
 | 常规/初稿/评审 | GLM-5.3-flash | DSH spawn 常驻（zai-coding-cn） | coding plan Pro 订阅额度 |
-| 深度/高 stakes | GLM-5.3 | DSH spawn 常驻（zai-coding-cn） | 同上 |
+| 高 stakes critic | deepseek-v4-pro | spawn 常驻 | 峰谷计费（A/B 双跑 0:3 实证胜 GLM-5.3，2026-09-02 回滚） |
+| GLM 家族视角（review-full） | GLM-5.3 | DSH spawn 常驻（zai-coding-cn） | coding plan Pro 订阅额度 |
 | 执行（写代码/跑测试） | GLM-5.3-flash / GLM-5.3 | codex CLI（自带沙箱） | 同上 |
 | 跨家族/视觉/架构 | kimi-k3 | spawn 常驻 | Allegro 年会员订阅额度 |
-| DeepSeek 补充 | v4-pro / v4-flash-vision-exp（vision-aux 视觉辅助） | spawn 常驻 | 峰谷计费 ¥3/9、¥9/27（高峰=工作日 9-12/14-18），批量排低谷/周末 |
+| DeepSeek 补充 | v4-flash-vision-exp（vision-aux 视觉辅助） | spawn 常驻 | 峰谷计费 ¥3/9（高峰=工作日 9-12/14-18），批量排低谷/周末 |
 
 - **claude 不加入席位**（2026-09-02 用户裁定）。
 - 订阅额度耗竭降级链：k3 不可用→v4-pro；glm 不可用→v4-pro。
@@ -153,7 +154,7 @@ cd ~/.dsh/profiles/web && node ~/Projects/dsh-moa/scripts/smoke.mjs
 
 - v0.1：roster + moa 工具 + /moa 命令 ✅
 - v0.2：常驻席位池 + 自动调度矩阵 + codex 异构席 + navigator 在线化 ✅
-- v0.3（本版）：订阅优先矩阵（GLM/k3 优先、DeepSeek 补充）+ claude 移出席位 + DSH alpha.4 适配 + vision-aux 交叉核验席 + GLM 评审席 spawn 常驻化（v0.3.3，alpha.4 实证 zai-coding-cn 直连）✅
+- v0.3（本版）：订阅优先矩阵（GLM/k3 优先、DeepSeek 补充）+ claude 移出席位 + DSH alpha.4 适配 + vision-aux 交叉核验席 + GLM 评审席 spawn 常驻化 + 高 stakes critic A/B 实证回滚 v4-pro（v0.3.4）✅
 - v0.4：workflow batch 子模式 · telemetry 周报 · 订阅额度耗竭检测与降级链 · 上游 continuable codex provider（见 docs/continuable-codex-provider-issue.md）
 
 ## Credits

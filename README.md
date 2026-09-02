@@ -158,7 +158,7 @@ cd ~/.dsh/profiles/web && node ~/Projects/dsh-moa/scripts/smoke.mjs
 
 ## Credits
 
-移植与借鉴：[pi-moa](https://www.npmjs.com/package/@duyviet1804/pi-moa)（MIT）、[openai/codex](https://github.com/openai/codex)（角色文件/Guardian 内控官）、[DataFlow-Harness](https://github.com/OpenDCAI/DataFlow-webui)（live-registry grounding）、[pi-moa 双平面实践](https://github.com/Flipped929/pi-moa)（三卡协议/调度矩阵/门禁分级）。
+移植与借鉴：[pi-moa 双平面实践](https://github.com/Flipped929/pi-moa)（三卡协议/调度矩阵/门禁分级）、[openai/codex](https://github.com/openai/codex)（角色文件/Guardian 内控官）、[DataFlow-Harness](https://github.com/OpenDCAI/DataFlow-webui)（live-registry grounding）。
 
 ## License
 

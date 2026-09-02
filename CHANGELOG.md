@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1 (2026-09-02)
+
+- 视觉辅助席（用户裁定）：有视觉材料的任务在 analyst 席（k3）之外追加 `vision-aux` 子代理（DeepSeek-V4-flash-vision-exp，官方多模态），与 k3 并行读图交叉核验；audit 等无 analyst 阵容不追加
+- 新增 `roles/vision-aux.json`（角色自带模型，矩阵不覆盖）；describeMatrix 同步更新
+- 调度矩阵单测 23 项（新增：vision-aux 出现条件 / review-full 末席追加 / audit 不追加）
+
 ## 0.3.0 (2026-09-02)
 
 - 订阅优先调度矩阵（用户裁定）：常规=GLM-5.3-flash、高 stakes critic=GLM-5.3（dev 平面 v4-pro 不同源）、视觉/devil=kimi-k3；DeepSeek 仅补充（大上下文 devil/executor-pro/navigator）

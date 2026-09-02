@@ -13,6 +13,7 @@ const roster = new Map(Object.entries({
   'executor-glm-flash': { name: 'executor-glm-flash', provider: 'codex', model: 'glm-5.3-flash', runtime: 'codex' },
   'executor-pro': { name: 'executor-pro', provider: 'deepseek-official', model: 'deepseek-v4-pro' },
   'architect-k3': { name: 'architect-k3', provider: 'kimi-coding', model: 'k3' },
+  'vision-aux': { name: 'vision-aux', provider: 'deepseek-official', model: 'deepseek-v4-flash-vision-exp' },
   navigator: { name: 'navigator', provider: 'deepseek-official', model: 'deepseek-v4-pro' },
 }));
 
@@ -46,13 +47,29 @@ test('high stakes：review 平面 critic 升 GLM-5.3；dev 平面升 v4-pro（�
   assert.equal(d.find((s) => s.role === 'executor-pro').model, 'deepseek-v4-pro');
 });
 
-test('视觉材料只换 analyst 席为 k3，其余席位保持家族多样性', () => {
+test('视觉材料：analyst 席换 k3，其余保持家族多样性，追加 vision-aux 辅助席', () => {
   const seats = assignSeats({ mode: 'review', stakes: undefined, needVision: true, bigContextChars: 0 }, resolved, roster);
   assert.deepEqual(seats.map((s) => [s.role, s.provider, s.model]), [
     ['analyst', 'kimi-coding', 'k3'],
     ['critic', 'codex', 'glm-5.3-flash'],
     ['devil', 'kimi-coding', 'k3'],
+    ['vision-aux', 'deepseek-official', 'deepseek-v4-flash-vision-exp'],
   ]);
+});
+
+test('vision-aux 只在有视觉材料时出现', () => {
+  const noVision = assignSeats({ mode: 'review', stakes: undefined, needVision: false, bigContextChars: 0 }, resolved, roster);
+  assert.ok(!noVision.some((s) => s.role === 'vision-aux'));
+});
+
+test('review-full + 视觉：vision-aux 追加在末席', () => {
+  const seats = assignSeats({ mode: 'review-full', stakes: undefined, needVision: true, bigContextChars: 0 }, resolved, roster);
+  assert.deepEqual(seats.map((s) => s.role), ['analyst', 'critic', 'devil', 'reviewer-glm', 'vision-aux']);
+});
+
+test('audit 无 analyst 席：即使有视觉材料也不加 vision-aux', () => {
+  const seats = assignSeats({ mode: 'audit', stakes: undefined, needVision: true, bigContextChars: 0 }, resolved, roster);
+  assert.deepEqual(seats.map((s) => s.role), ['navigator']);
 });
 
 test('大上下文（>200K 字符）：devil 改 DeepSeek 大上下文读全量', () => {

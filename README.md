@@ -2,7 +2,7 @@
 
 **dsh-moa 是 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）上的多模型协同运行时（Mixture-of-Agents）：主模型纯 GUI 选择做 captain，DSH 注册的每个模型都能做子模型，常驻席位跨任务保留上下文，codex 异构席位接入 GLM，navigator 内控官异步核查。**
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) · [![Version: 0.3.0](https://img.shields.io/badge/version-0.3.0-blue.svg)](CHANGELOG.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) · [![Version: 0.3.1](https://img.shields.io/badge/version-0.3.1-blue.svg)](CHANGELOG.md)
 
 ## 适配 DSH 版本
 
@@ -17,7 +17,7 @@
 
 - **主模型不钉定**：你在主界面正常选模型，那个模型就是 captain/聚合器——本插件从不切换或覆盖你的选择。
 - **子模型任意注册**：roster 角色文件制（包内默认 + `~/.dsh/moa/roles/` 用户层覆盖），加一个 JSON 文件即注册新角色/新模型。
-- **自动调度矩阵（订阅优先）**：不指定席位时，按 模型特性 × 任务类型 × 成本 自动分派——常规=GLM-5.3-flash（coding plan Pro 订阅）/ 高 stakes critic=GLM-5.3（同订阅）/ 视觉与 devil=kimi-k3（Allegro 年会员订阅）/ DeepSeek 仅补充（大上下文 devil、navigator、难片 executor-pro，批量排低谷）。
+- **自动调度矩阵（订阅优先）**：不指定席位时，按 模型特性 × 任务类型 × 成本 自动分派——常规=GLM-5.3-flash（coding plan Pro 订阅）/ 高 stakes critic=GLM-5.3（同订阅）/ 视觉与 devil=kimi-k3（Allegro 年会员订阅）/ DeepSeek 仅补充（大上下文 devil、navigator、难片 executor-pro、视觉辅助 vision-aux=v4-flash-vision-exp 与 k3 analyst 交叉核验，批量排低谷）。
 - **常驻席位**：spawn 席位跨任务保留进程与上下文（续任务带着上轮记忆），冷恢复跨重启存续；codex 席位经 thread_id resume 续接。
 - **异构 codex 席位**：GLM 家族经 codex runtime 接入（独立 agent runtime，自带沙箱与工具链）。
 - **navigator 内控官**：任务收官后按风险分层自动核查（全过必审/高 stakes 必审），产出核查卡与成本对比。
@@ -42,6 +42,7 @@ moa 工具 ── 自动调度矩阵（订阅优先：特性×任务×成本）
   ├─ 异构执行席（codex runtime · GLM 订阅 · 自带沙箱）
   │     executor-glm-flash / executor-glm · architect-k3（视觉走查）
   └─ DeepSeek 补充席：executor-pro（难片二顺位）· navigator（内控 v4-pro 异步）
+        · vision-aux（v4-flash-vision-exp：有视觉材料时与 k3 analyst 交叉核验）
         │ 任务卡 → 结果卡（黑板 .pi/moa/<task-id>/results/；星型拓扑，席位间不直连）
         ▼
 captain 读卡 → 聚合裁决 →（全过/高 stakes 必审）
@@ -95,7 +96,7 @@ context_files=[...]                          # 材料白名单（工作区相对
 
 ## roster 角色文件
 
-包内默认在 `roles/`（analyst/critic/devil/navigator/executor-pro/architect-k3/vision-check/executor-glm-flash/executor-glm/executor-codex/reviewer-glm/reviewer-glm-flash）。用户层 `~/.dsh/moa/roles/` 同名覆盖、新文件即新角色：
+包内默认在 `roles/`（analyst/critic/devil/navigator/executor-pro/architect-k3/vision-check/vision-aux/executor-glm-flash/executor-glm/executor-codex/reviewer-glm/reviewer-glm-flash）。用户层 `~/.dsh/moa/roles/` 同名覆盖、新文件即新角色：
 
 ```json
 {
@@ -118,7 +119,7 @@ context_files=[...]                          # 材料白名单（工作区相对
 | 常规/初稿/评审 | GLM-5.3-flash | codex CLI | coding plan Pro 订阅额度 |
 | 深度/高 stakes | GLM-5.3 | codex CLI | 同上 |
 | 跨家族/视觉/架构 | kimi-k3 | spawn 常驻 | Allegro 年会员订阅额度 |
-| DeepSeek 补充 | v4-pro / v4-flash-vision-exp | spawn 常驻 | 峰谷计费 ¥3/9、¥9/27（高峰=工作日 9-12/14-18），批量排低谷/周末 |
+| DeepSeek 补充 | v4-pro / v4-flash-vision-exp（vision-aux 视觉辅助） | spawn 常驻 | 峰谷计费 ¥3/9、¥9/27（高峰=工作日 9-12/14-18），批量排低谷/周末 |
 
 - **claude 不加入席位**（2026-09-02 用户裁定）。
 - 订阅额度耗竭降级链：k3 不可用→v4-pro；glm 不可用→v4-pro。

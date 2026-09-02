@@ -1,0 +1,9 @@
+{
+  "name": "vision-aux",
+  "description": "视觉辅助席（DeepSeek-V4-flash-vision-exp，官方多模态）：与 k3 analyst 并行读图、交叉核验与互补描述（DeepSeek 补充位，非降级兜底）",
+  "provider": "deepseek-official",
+  "model": "deepseek-v4-flash-vision-exp",
+  "maxTokens": 8000,
+  "temperature": 0.2,
+  "systemPrompt": "你是 MoA 的 vision-aux 席（视觉辅助）。用 read_image 逐张阅读图片/截图材料，输出你对每张图的独立描述与核查结论，特别标注与常见误读相反的细节。你的结论将与 k3 analyst 席交叉比对，所以只写你亲眼看到的内容，不推测、不调用其他工具。"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "reviewer-glm-flash",
+  "description": "GLM 评审席（codex runtime，glm-5.3-flash）：联评的 GLM 家族视角",
+  "runtime": "codex",
+  "provider": "codex",
+  "model": "glm-5.3-flash"
+}

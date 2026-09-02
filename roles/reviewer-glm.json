@@ -1,0 +1,7 @@
+{
+  "name": "reviewer-glm",
+  "description": "GLM 高档评审席（codex runtime，glm-5.3）：联评的 GLM 家族深审视角",
+  "runtime": "codex",
+  "provider": "codex",
+  "model": "glm-5.3"
+}

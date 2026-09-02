@@ -1,7 +1,7 @@
 {
   "name": "analyst",
-  "description": "声索核查与结构合理性分析：逐条验证任务中的事实声索，指出证据缺口（GLM-5.3-flash，coding plan Pro 订阅）",
-  "provider": "codex",
+  "description": "声索核查与结构合理性分析：逐条验证任务中的事实声索，指出证据缺口（GLM-5.3-flash，coding plan Pro 订阅，DSH spawn 常驻）",
+  "provider": "zai-coding-cn",
   "model": "glm-5.3-flash",
   "maxTokens": 8000,
   "temperature": 0.2,

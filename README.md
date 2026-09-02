@@ -2,7 +2,7 @@
 
 **dsh-moa 是 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）上的多模型协同运行时（Mixture-of-Agents）：主模型纯 GUI 选择做 captain，DSH 注册的每个模型都能做子模型，常驻席位跨任务保留上下文，codex 异构席位接入 GLM，navigator 内控官异步核查。**
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) · [![Version: 0.3.1](https://img.shields.io/badge/version-0.3.1-blue.svg)](CHANGELOG.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) · [![Version: 0.3.3](https://img.shields.io/badge/version-0.3.3-blue.svg)](CHANGELOG.md)
 
 ## 适配 DSH 版本
 
@@ -19,7 +19,7 @@
 - **子模型任意注册**：roster 角色文件制（包内默认 + `~/.dsh/moa/roles/` 用户层覆盖），加一个 JSON 文件即注册新角色/新模型。
 - **自动调度矩阵（订阅优先）**：不指定席位时，按 模型特性 × 任务类型 × 成本 自动分派——常规=GLM-5.3-flash（coding plan Pro 订阅）/ 高 stakes critic=GLM-5.3（同订阅）/ 视觉与 devil=kimi-k3（Allegro 年会员订阅）/ DeepSeek 仅补充（大上下文 devil、navigator、难片 executor-pro、视觉辅助 vision-aux=v4-flash-vision-exp 与 k3 analyst 交叉核验，批量排低谷）。
 - **常驻席位**：spawn 席位跨任务保留进程与上下文（续任务带着上轮记忆），冷恢复跨重启存续；codex 席位经 thread_id resume 续接。
-- **异构 codex 席位**：GLM 家族经 codex runtime 接入（独立 agent runtime，自带沙箱与工具链）。
+- **异构 codex 席位**：executor 执行类角色（写代码/跑测试）经 codex runtime 接入（独立 agent runtime，自带沙箱与工具链）；GLM 评审席自 v0.3.3 起改走 DSH spawn 常驻（zai-coding-cn 直连，alpha.4 实证）。
 - **navigator 内控官**：任务收官后按风险分层自动核查（全过必审/高 stakes 必审），产出核查卡与成本对比。
 
 ## 解决什么痛点
@@ -37,7 +37,7 @@
   ▼
 moa 工具 ── 自动调度矩阵（订阅优先：特性×任务×成本）
   ├─ 常驻评审席（spawn continuable，跨任务保留上下文，冷恢复跨重启）
-  │     analyst/critic（GLM-5.3-flash · codex）· devil（k3 跨家族）
+  │     analyst/critic（GLM-5.3-flash · zai-coding-cn 直连）· devil（k3 跨家族）
   │     stakes=high 时 critic→GLM-5.3（review 平面）
   ├─ 异构执行席（codex runtime · GLM 订阅 · 自带沙箱）
   │     executor-glm-flash / executor-glm · architect-k3（视觉走查）
@@ -61,7 +61,7 @@ dsh plugin --profile web add /path/to/dsh-moa     # 或 dsh plugin --profile web
     - id: dsh-moa
       name: 'dsh-moa'
 
-# 3. （必需：GLM 常规/执行席走 codex CLI）装后端 + patch 行
+# 3. （执行席需要：dev 平面 executor 走 codex CLI；评审席已改 DSH spawn 直连）装后端 + patch 行
 dsh plugin --profile web add @deepseek-ai/dsh-subagent-codex
 - insert:
     - id: subagent-codex
@@ -70,7 +70,7 @@ dsh plugin --profile web add @deepseek-ai/dsh-subagent-codex
 # 4. 重启该 profile
 ```
 
-要求：DSH ≥ 0.1.2-alpha.1（官方验证 0.1.2-alpha.4）；GLM 席位另需本机 `codex` CLI 可用（`~/.codex/config.toml` 配置 GLM provider）。
+要求：DSH ≥ 0.1.2-alpha.1（官方验证 0.1.2-alpha.4）；GLM 评审席直连 DSH（需配置 `zai-coding-cn` provider，GLM coding plan 订阅）；executor 执行席另需本机 `codex` CLI 可用（`~/.codex/config.toml` 配置 GLM provider）。
 
 ## 使用
 
@@ -116,8 +116,9 @@ context_files=[...]                          # 材料白名单（工作区相对
 
 | 档位 | 模型 | 通道 | 成本口径 |
 |---|---|---|---|
-| 常规/初稿/评审 | GLM-5.3-flash | codex CLI | coding plan Pro 订阅额度 |
-| 深度/高 stakes | GLM-5.3 | codex CLI | 同上 |
+| 常规/初稿/评审 | GLM-5.3-flash | DSH spawn 常驻（zai-coding-cn） | coding plan Pro 订阅额度 |
+| 深度/高 stakes | GLM-5.3 | DSH spawn 常驻（zai-coding-cn） | 同上 |
+| 执行（写代码/跑测试） | GLM-5.3-flash / GLM-5.3 | codex CLI（自带沙箱） | 同上 |
 | 跨家族/视觉/架构 | kimi-k3 | spawn 常驻 | Allegro 年会员订阅额度 |
 | DeepSeek 补充 | v4-pro / v4-flash-vision-exp（vision-aux 视觉辅助） | spawn 常驻 | 峰谷计费 ¥3/9、¥9/27（高峰=工作日 9-12/14-18），批量排低谷/周末 |
 
@@ -152,7 +153,7 @@ cd ~/.dsh/profiles/web && node ~/Projects/dsh-moa/scripts/smoke.mjs
 
 - v0.1：roster + moa 工具 + /moa 命令 ✅
 - v0.2：常驻席位池 + 自动调度矩阵 + codex 异构席 + navigator 在线化 ✅
-- v0.3（本版）：订阅优先矩阵（GLM/k3 优先、DeepSeek 补充）+ claude 移出席位 + DSH alpha.4 适配 ✅
+- v0.3（本版）：订阅优先矩阵（GLM/k3 优先、DeepSeek 补充）+ claude 移出席位 + DSH alpha.4 适配 + vision-aux 交叉核验席 + GLM 评审席 spawn 常驻化（v0.3.3，alpha.4 实证 zai-coding-cn 直连）✅
 - v0.4：workflow batch 子模式 · telemetry 周报 · 订阅额度耗竭检测与降级链 · 上游 continuable codex provider（见 docs/continuable-codex-provider-issue.md）
 
 ## Credits

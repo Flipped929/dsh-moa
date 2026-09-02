@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.3 (2026-09-02)
+
+- **GLM 评审席 spawn 常驻化**（用户裁定）：analyst/critic/reviewer-glm/reviewer-glm-flash 与矩阵 cheapModel/deepModel 槽位从 codex CLI 改回 DSH spawn 常驻（`zai-coding-cn` provider）——alpha.4 实证 GLM 直连 spawn 全流程（进程保留 + 席位自写卡 + DSH 工具面 read/grep/glob/read_image）
+- executor 系列（executor-glm/executor-glm-flash/executor-codex）保持 codex CLI runtime：执行类任务需要其沙箱与工具链
+- 评审席 spawn 化的收益：跨任务上下文接续（连续评审带上轮记忆）、卡片席位自写（非插件代写）、视觉材料席位可自行 read_image
+- 调度矩阵单测 23 项全绿（评审席断言 runtime=undefined / provider=zai-coding-cn）
+
 ## 0.3.2 (2026-09-02)
 
 - fix: package exports 开放 `./lib/*` 子路径——smoke.mjs 的 roster 探测此前因 `Package subpath './lib/roster.js' is not defined by "exports"` 而 FAIL（alpha.4 升级实测中发现，升级韧性流程起效）

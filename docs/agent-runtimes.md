@@ -18,6 +18,8 @@
 
 ## 与常驻席位（spawn 通道）的分工
 
+> v0.3.3 修订（2026-09-02，alpha.4 实证）：**GLM 评审席已全部改回 spawn 常驻**——`zai-coding-cn` provider（GLM coding plan 订阅）可在 DSH 内直接 spawn（fast 直连 + 常驻交卡均已实测跑通）。codex 通道收窄为 **executor 执行类角色专用**（写代码/跑测试需要其自带沙箱与工具链）。
+
 | | spawn 常驻席位（默认） | codex 执行席 |
 |---|---|---|
 | 上下文 | 跨任务保留（连续任务表现好） | **v0.2.0 起有保留**：席位池按 codex CLI 会话存储续接（`--json` 捕获 thread_id，`resume <id>` 续跑，2026-08-28 实证记忆接续正确）；DSH provider 通道为 ephemeral 一次性（实证 NO_CONTINUITY），上游 continuable 草案见 docs/continuable-codex-provider-issue.md |

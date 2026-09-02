@@ -1,7 +1,7 @@
 {
   "name": "critic",
-  "description": "对抗挑错：找漏洞、风险、被忽略的问题与最弱环节（GLM-5.3-flash，coding plan Pro 订阅；stakes=high 自动升 GLM-5.3）",
-  "provider": "codex",
+  "description": "对抗挑错：找漏洞、风险、被忽略的问题与最弱环节（GLM-5.3-flash，coding plan Pro 订阅，DSH spawn 常驻；stakes=high 自动升 GLM-5.3）",
+  "provider": "zai-coding-cn",
   "model": "glm-5.3-flash",
   "maxTokens": 8000,
   "temperature": 0.2,

@@ -1,7 +1,6 @@
 {
   "name": "reviewer-glm",
-  "description": "GLM 高档评审席（codex runtime，glm-5.3）：联评的 GLM 家族深审视角",
-  "runtime": "codex",
-  "provider": "codex",
+  "description": "GLM 高档评审席（glm-5.3，coding plan Pro 订阅，DSH spawn 常驻）：联评的 GLM 家族深审视角",
+  "provider": "zai-coding-cn",
   "model": "glm-5.3"
 }

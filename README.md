@@ -6,7 +6,7 @@
 
 ## 适配 DSH 版本
 
-- **官方验证版本：dsh-v0.1.2-alpha.4**（2026-09-01，当前最新）；开发/验证历史：0.1.2-alpha.1 / alpha.2 / alpha.3。
+- **官方验证版本：dsh-v0.1.2-alpha.4**；**0.1.3-alpha.1 代码已适配**（v0.3.6：派活符号改名 `deliverPrompt` + 六参签名，三代兼容单测锁定；运行时验证待升级后执行）。开发/验证历史：0.1.2-alpha.1 / alpha.2 / alpha.3 / alpha.4。
 - 最低要求：dsh-v0.1.2-alpha.1（每席位 reasoningEffort 需要该版本；更早版本自动忽略该字段）。
 - alpha.4 变动核对：持续子代理的 `report` 工具被 `send_message` 取代——本插件席位走自注册 `moa_write_card` 工具 + 结果卡协议，不受影响；宿主派活 API `followup` 被移除，改走 `Symbol.for('dsh.subagent.queuePrompt')` 内部符号通道——本插件已做跨版本兼容分派（≤alpha.3 用 followup，≥alpha.4 用符号通道），并有单测锁定；`Session.events` 被按需 API（`seq`/`eventAt()`/`snapshotEvents()`）取代——本插件未使用；Web PTC 模式默认移除 `workflow` 工具——本插件 deny 列表本就含 workflow。
 - 升级兼容按「能力自检 + 优雅降级」设计（见文末）。

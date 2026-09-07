@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.6 (2026-09-04)
+
+- **DSH 0.1.3-alpha.1 适配**（moa review-full 评审后收敛）：宿主派活符号通道改名 `dsh.subagent.queuePrompt` → `dsh.subagent.deliverPrompt` 且签名加第 6 参 `delivery:'queue'|'steer'`——deliverSeatPrompt 升级为三代兼容（followup ≤alpha.3 / queuePrompt alpha.4 / deliverPrompt ≥0.1.3），任务派发选 'queue' 语义，'steer' 留作未来席位催办
+- fix（评审发现）：followup 分支补 `?.` 可选链（subagents 为 undefined 时不再 TypeError）；probeCapabilities 探测加第三符号候选
+- 评审记录：review-full 4 席抓到 2 实漏 + 4 方案漏洞全部收敛；升级步骤补"旧进程完全退出确认"（0.1.3 新增 session 锁，同 session 至多一进程持有）；Session format v2 迁移后 reattach 需升级后实证
+- 单测 26/26（新增 deliverPrompt 六参与 delivery='queue' 断言、符号优先级、undefined 防御）
+
 ## 0.3.5 (2026-09-02)
 
 - **fix：图片材料任务卡措辞强化**——常驻席位任务卡的图片材料从"请自行查看"改为"必须用 read_image 读取此指定路径，禁止自选其他文件替代"（实证事故：vision-exp 席位在 A/B 多模态题中未读指定图而自行 glob 了三张合同图，OCR 质量虽好但对象错误）

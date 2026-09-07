@@ -3,7 +3,8 @@ import { test } from 'node:test';
 import { deliverSeatPrompt } from '../lib/seats.js';
 
 const parentAgent = { session: { header: { id: 'p-1' } } };
-const QUEUE_PROMPT = Symbol.for('dsh.subagent.queuePrompt');
+const QUEUE_PROMPT_V4 = Symbol.for('dsh.subagent.queuePrompt');
+const DELIVER_PROMPT_V5 = Symbol.for('dsh.subagent.deliverPrompt');
 
 test('派活兼容：DSH ≤alpha.3 走 followup（options 形态）', async () => {
   let captured = null;
@@ -20,11 +21,11 @@ test('派活兼容：DSH ≤alpha.3 走 followup（options 形态）', async () 
   assert.deepEqual(captured.options.source, { kind: 'plugin', plugin: 'dsh-moa' });
 });
 
-test('派活兼容：DSH ≥alpha.4 走 queuePrompt 符号通道（位置参数形态）', async () => {
+test('派活兼容：DSH ≥0.1.3 走 deliverPrompt 符号通道（6 参 + delivery=queue）', async () => {
   let captured = null;
   const subagents = {
-    [QUEUE_PROMPT](parent, childId, content, source, signal) {
-      captured = { parent, childId, content, source, signal };
+    [DELIVER_PROMPT_V5](parent, childId, content, source, signal, delivery) {
+      captured = { parent, childId, content, source, signal, delivery };
       return Promise.resolve('ok');
     },
   };
@@ -34,21 +35,55 @@ test('派活兼容：DSH ≥alpha.4 走 queuePrompt 符号通道（位置参数�
   assert.deepEqual(captured.content, [{ type: 'text', text: '任务包' }]);
   assert.deepEqual(captured.source, { kind: 'plugin', plugin: 'dsh-moa' });
   assert.equal(captured.signal, 'sig');
+  assert.equal(captured.delivery, 'queue'); // 任务派发=排队成独立轮次；steer 留作未来席位催办
 });
 
-test('派活兼容：两通道都不存在时响亮报错（契约变动信号）', async () => {
+test('派活兼容：DSH alpha.4 走 queuePrompt 符号通道（位置参数形态）', async () => {
+  let captured = null;
+  const subagents = {
+    [QUEUE_PROMPT_V4](parent, childId, content, source, signal) {
+      captured = { parent, childId, content, source, signal };
+      return Promise.resolve('ok');
+    },
+  };
+  await deliverSeatPrompt(subagents, parentAgent, 'c-3', '任务包', 'sig');
+  assert.equal(captured.parent, parentAgent);
+  assert.equal(captured.childId, 'c-3');
+  assert.deepEqual(captured.content, [{ type: 'text', text: '任务包' }]);
+  assert.deepEqual(captured.source, { kind: 'plugin', plugin: 'dsh-moa' });
+  assert.equal(captured.signal, 'sig');
+});
+
+test('派活兼容：deliverPrompt 优先于 queuePrompt（新版符号先测到）', async () => {
+  let usedDeliver = false;
+  const subagents = {
+    [DELIVER_PROMPT_V5]() { usedDeliver = true; return Promise.resolve('ok'); },
+    [QUEUE_PROMPT_V4]() { throw new Error('不应走旧符号通道'); },
+  };
+  await deliverSeatPrompt(subagents, parentAgent, 'c-4', '任务包', undefined);
+  assert.equal(usedDeliver, true);
+});
+
+test('派活兼容：三通道都不存在时响亮报错（契约变动信号）', async () => {
   await assert.rejects(
-    () => deliverSeatPrompt({}, parentAgent, 'c-3', '任务包', undefined),
-    /既无 followup.*也无 queuePrompt/,
+    () => deliverSeatPrompt({}, parentAgent, 'c-5', '任务包', undefined),
+    /无 followup（≤alpha\.3）\/ queuePrompt（alpha\.4）\/ deliverPrompt（≥0\.1\.3）/,
   );
 });
 
-test('派活兼容：alpha.4 优先用 followup 若二者并存（向后兼容别名）', async () => {
+test('派活兼容：subagents 为 undefined 时走报错分支而非 TypeError（可选链防御）', async () => {
+  await assert.rejects(
+    () => deliverSeatPrompt(undefined, parentAgent, 'c-6', '任务包', undefined),
+    /subagents 契约不可用/,
+  );
+});
+
+test('派活兼容：followup 若与符号并存仍优先（向后兼容别名）', async () => {
   let usedFollowup = false;
   const subagents = {
     followup() { usedFollowup = true; return Promise.resolve('ok'); },
-    [QUEUE_PROMPT]() { throw new Error('不应走符号通道'); },
+    [DELIVER_PROMPT_V5]() { throw new Error('不应走符号通道'); },
   };
-  await deliverSeatPrompt(subagents, parentAgent, 'c-4', '任务包', undefined);
+  await deliverSeatPrompt(subagents, parentAgent, 'c-7', '任务包', undefined);
   assert.equal(usedFollowup, true);
 });

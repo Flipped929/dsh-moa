@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.7 (2026-09-09)
+
+- **V4.1-Flash 中间版本入架构**（DeepSeek 限时内测，模型 ID 含 `expires-on-0910`，2026-09-10 到期）：新增 `roles/executor-v41.json`（通用席）与 `roles/vision-v41.json`（多模态核查席）——原生多模态、与 v4-flash 同价、官方定位"能否全面替换 V4 Pro"的候选
+- 实证 5 题：C2 找 bug 正中靶心（捕获组 bug + 修复 + 替代方案）✅；W2 写作质量与 glm-flash 持平 ✅；M1 读图 navigator 三重互证（与 GLM 腿一致/15 部规范全序对应/GB 疑点三源同判）✅；M3 前端复刻 298 行（CSS 变量 + 响应式断点，覆盖超 glm-flash 241 行基线）✅；W1 润色 fast 偶发失败（deepseek 系同 pattern）
+- 定位与降级：**不进默认矩阵**（到期断裂风险）；到期前可显式指派角色或临时把 `cheapModel`/`visionModel` 指向它，到期后换回 `glm-5.3-flash` / `kimi-coding/k3` / `vision-exp`
+- settings.yaml：v4.1 条目补 `inputModalities: [text, image]`（原生多模态声明，实证读图成功）
+
 ## 0.3.6 (2026-09-04)
 
 - **DSH 0.1.3-alpha.1 适配**（moa review-full 评审后收敛）：宿主派活符号通道改名 `dsh.subagent.queuePrompt` → `dsh.subagent.deliverPrompt` 且签名加第 6 参 `delivery:'queue'|'steer'`——deliverSeatPrompt 升级为三代兼容（followup ≤alpha.3 / queuePrompt alpha.4 / deliverPrompt ≥0.1.3），任务派发选 'queue' 语义，'steer' 留作未来席位催办

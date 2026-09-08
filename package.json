@@ -1,6 +1,6 @@
 {
   "name": "dsh-moa",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "DSH-MOA — Mixture-of-Agents runtime for DeepSeek Harness: GUI-selected main model, every registered model as sub-model, async Navigator, roster role files",
   "type": "module",
   "main": "lib/index.js",

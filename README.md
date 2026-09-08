@@ -122,9 +122,11 @@ context_files=[...]                          # 材料白名单（工作区相对
 | 执行（写代码/跑测试） | GLM-5.3-flash / GLM-5.3 | codex CLI（自带沙箱） | 同上 |
 | 跨家族/视觉/架构 | kimi-k3 | spawn 常驻 | Allegro 年会员订阅额度 |
 | DeepSeek 补充 | v4-flash-vision-exp（vision-aux 视觉辅助） | spawn 常驻 | 峰谷计费 ¥3/9（高峰=工作日 9-12/14-18），批量排低谷/周末 |
+| **临时：V4.1 内测**（`executor-v41`/`vision-v41`） | deepseek-v4.1-flash-expires-on-0910 | spawn 常驻 | 与 v4-flash 同价；**原生多模态**；**2026-09-10 到期**，到期后换回 GLM-flash/k3/vision-exp |
 
 - **claude 不加入席位**（2026-09-02 用户裁定）。
 - 订阅额度耗竭降级链：k3 不可用→v4-pro；glm 不可用→v4-pro。
+- V4.1-Flash 为限时内测模型（5 题实证：找 bug/写作/读图/前端复刻 4 ✅、润色 fast 偶发 ❌；M3 前端 298 行含响应式，超 GLM-flash 基线）——**不进默认矩阵**，显式指派或临时改槽位使用。
 
 ## 治理边界
 

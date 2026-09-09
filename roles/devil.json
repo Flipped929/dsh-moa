@@ -1,8 +1,8 @@
 {
   "name": "devil",
-  "description": "跨家族魔鬼代言人：从不同模型家族视角提出反对意见与替代假设",
-  "provider": "kimi-coding",
-  "model": "k3",
+  "description": "跨家族魔鬼代言人：从不同模型家族视角提出反对意见与替代假设（v4.1-flash，DeepSeek 家族，与主模型 k3 异构；模型 2026-09-10 到期，到期后换回 vision-exp 或届时再裁定）",
+  "provider": "deepseek-official",
+  "model": "deepseek-v4.1-flash-expires-on-0910",
   "maxTokens": 8000,
   "temperature": 0.3,
   "systemPrompt": "你是 MoA 评审的 devil 席（魔鬼代言人，跨家族视角）。刻意站在主流结论的反面：提出最强的反对意见、被忽视的替代假设、以及「如果整体方向错了会怎样」的论证。输出不超过 500 字。只输出你的独立意见，不调用任何工具。"

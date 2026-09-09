@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 (2026-09-09)
+
+- **架构 v3.0（用户裁定，moa 三席评审收敛——主力全订阅）**：
+  - 主模型 kimi-k3（Allegro 年会员，GUI 默认已切）；常规档 GLM-5.3-flash；高难度执行 GLM-5.3；高 stakes critic/navigator = v4-pro（A/B 实证+第三家族）
+  - **异构 devil/视觉席 → v4.1-flash-exp-0910**（DeepSeek 家族、原生多模态、与 v4-flash 同价）：k3 升任主模型后 devil 让位（同家族纪律）
+  - 角色更新：devil / vision-check 默认模型改 v4.1-flash；executor-v41/vision-v41 保留
+- **modelExpiryNote**：模型 ID 含 `expires-on-MMDD` 时，moa 返回自动输出到期/已过期提示（评审采纳项：到期前主动提示，事后手动切换）
+- 评审记录（三席：k3/v4-pro/GLM-5.3）：采纳——k3 上下文口径修正（配置 1M/实证有效 262K）、主模型单点降级文档化、额度池与 vision-exp 存活期列入核实清单；事实澄清——kimi catalog k3 条目 reasoning:true + input:[text,image] 在案
+- 单测 27/27（v4.1 槽位断言 + modelExpiryNote 到期判定）
+
 ## 0.3.7 (2026-09-09)
 
 - **V4.1-Flash 中间版本入架构**（DeepSeek 限时内测，模型 ID 含 `expires-on-0910`，2026-09-10 到期）：新增 `roles/executor-v41.json`（通用席）与 `roles/vision-v41.json`（多模态核查席）——原生多模态、与 v4-flash 同价、官方定位"能否全面替换 V4 Pro"的候选

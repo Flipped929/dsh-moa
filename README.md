@@ -117,12 +117,12 @@ context_files=[...]                          # 材料白名单（工作区相对
 | 档位 | 模型 | 通道 | 成本口径 |
 |---|---|---|---|
 | 主模型 captain（GUI/默认） | kimi-k3 | 主会话 | Allegro 年会员订阅额度 |
-| 常规/初稿/评审 | GLM-5.3-flash | DSH spawn 常驻（zai-coding-cn） | coding plan Pro 订阅额度 |
+| 常规/初稿/评审 | GLM-5.3-flash（**多模态**，v2.4 实证） | DSH spawn 常驻（zai-coding-cn） | coding plan Pro 订阅额度 |
 | 高难度执行/难片 | GLM-5.3（第一顺位）+ v4-pro（第二顺位 executor-pro） | spawn 常驻 / codex CLI | 订阅 + 峰谷计费 |
 | 高 stakes critic + navigator 内控 | deepseek-v4-pro | spawn 常驻 | 峰谷计费（A/B 双跑 0:3 实证 + 第三家族裁定） |
 | GLM 家族视角（review-full） | GLM-5.3 | DSH spawn 常驻（zai-coding-cn） | coding plan Pro 订阅额度 |
 | 执行（写代码/跑测试） | GLM-5.3-flash / GLM-5.3 | codex CLI（自带沙箱） | 同上 |
-| 异构 devil/视觉（跨家族） | deepseek-v4.1-flash-expires-on-0910 | spawn 常驻 | 与 v4-flash 同价；**原生多模态**；**2026-09-10 到期** → 换回 vision-exp 或届时再裁定 |
+| 异构 devil/视觉（跨家族） | deepseek-v4.1-flash-expires-on-0910 | spawn 常驻 | 与 v4-flash 同价；**原生多模态**；**2026-09-10 到期** → 降级预案：**视觉席→GLM-5.3-flash**（订阅+已实证多模态）、**devil→vision-exp**（保 DeepSeek 跨家族） |
 | DeepSeek 补充 | v4-flash-vision-exp（vision-aux 交叉核验辅助） | spawn 常驻 | 峰谷计费 ¥3/9（高峰=工作日 9-12/14-18），批量排低谷/周末 |
 
 - **claude 不加入席位**（2026-09-02 用户裁定）。

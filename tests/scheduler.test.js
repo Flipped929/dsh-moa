@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { assignSeats, describeMatrix, isPeakHour, modelExpiryNote } from '../lib/scheduler.js';
 
 // 架构 v3.0（2026-09-09 用户裁定，moa 三席评审收敛）：主力全订阅
-// （k3 主模型 / GLM-flash 常规 / GLM-5.3 高难度执行 / v4-pro critic+navigator / v4.1 异构 devil+视觉）
+// （k3 主模型 / GLM-5.3-flash 常规 / GLM-5.3 高难度执行 / v4-pro critic+navigator / v4.1 异构 devil+视觉）
 const V41 = 'deepseek-v4.1-flash-expires-on-0910';
 const roster = new Map(Object.entries({
   analyst: { name: 'analyst', provider: 'zai-coding-cn', model: 'glm-5.3-flash', systemPrompt: 'a' },
@@ -26,7 +26,7 @@ const resolved = {
   devilModel: `deepseek-official/${V41}`,
 };
 
-test('review 三席：analyst/critic=GLM-flash(spawn 常驻)、devil=v4.1 异构跨家族', () => {
+test('review 三席：analyst/critic=GLM-5.3-flash(spawn 常驻)、devil=v4.1 异构跨家族', () => {
   const seats = assignSeats({ mode: 'review', stakes: undefined, needVision: false, bigContextChars: 0 }, resolved, roster);
   assert.deepEqual(seats.map((s) => [s.role, s.provider, s.model, s.runtime]), [
     ['analyst', 'zai-coding-cn', 'glm-5.3-flash', undefined],

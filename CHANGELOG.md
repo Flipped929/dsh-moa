@@ -17,7 +17,7 @@
 ## 0.3.7 (2026-09-09)
 
 - **V4.1-Flash 中间版本入架构**（DeepSeek 限时内测，模型 ID 含 `expires-on-0910`，2026-09-10 到期）：新增 `roles/executor-v41.json`（通用席）与 `roles/vision-v41.json`（多模态核查席）——原生多模态、与 v4-flash 同价、官方定位"能否全面替换 V4 Pro"的候选
-- 实证 5 题：C2 找 bug 正中靶心（捕获组 bug + 修复 + 替代方案）✅；W2 写作质量与 glm-flash 持平 ✅；M1 读图 navigator 三重互证（与 GLM 腿一致/15 部规范全序对应/GB 疑点三源同判）✅；M3 前端复刻 298 行（CSS 变量 + 响应式断点，覆盖超 glm-flash 241 行基线）✅；W1 润色 fast 偶发失败（deepseek 系同 pattern）
+- 实证 5 题：C2 找 bug 正中靶心（捕获组 bug + 修复 + 替代方案）✅；W2 写作质量与 glm-5.3-flash 持平 ✅；M1 读图 navigator 三重互证（与 GLM 腿一致/15 部规范全序对应/GB 疑点三源同判）✅；M3 前端复刻 298 行（CSS 变量 + 响应式断点，覆盖超 glm-5.3-flash 241 行基线）✅；W1 润色 fast 偶发失败（deepseek 系同 pattern）
 - 定位与降级：**不进默认矩阵**（到期断裂风险）；到期前可显式指派角色或临时把 `cheapModel`/`visionModel` 指向它，到期后换回 `glm-5.3-flash` / `kimi-coding/k3` / `vision-exp`
 - settings.yaml：v4.1 条目补 `inputModalities: [text, image]`（原生多模态声明，实证读图成功）
 
@@ -32,11 +32,11 @@
 
 - **fix：图片材料任务卡措辞强化**——常驻席位任务卡的图片材料从"请自行查看"改为"必须用 read_image 读取此指定路径，禁止自选其他文件替代"（实证事故：vision-exp 席位在 A/B 多模态题中未读指定图而自行 glob 了三张合同图，OCR 质量虽好但对象错误）
 - vision-check 角色 prompt 同步强化（指定路径纪律 + 无图像输入能力时 failed 并注明原因）
-- 实证发现记录：GLM-5.3-flash 多模态需在 DSH 模型配置补 `inputModalities: [text, image]`（否则 read_image 报 "does not declare image input"）；vision-exp 在 fast 通道疑因 deepseek 官方配置 thinking=max 导致短任务偶发空产出（5 战 4 败），fast 短任务建议用 GLM-flash/k3
+- 实证发现记录：GLM-5.3-flash 多模态需在 DSH 模型配置补 `inputModalities: [text, image]`（否则 read_image 报 "does not declare image input"）；vision-exp 在 fast 通道疑因 deepseek 官方配置 thinking=max 导致短任务偶发空产出（5 战 4 败），fast 短任务建议用 GLM-5.3-flash/k3
 
 ## 0.3.4 (2026-09-02)
 
-- **高 stakes critic 回滚 v4-pro**（A/B 双跑实证）：52 目录 3 个历史难评审任务双跑 glm-5.3 vs v4-pro 单席 critic，四维评判（具体性/证据准确性/重要性/可操作性）**v4-pro 3:0 胜**——glm-5.3 胜率 0% 触发预设回滚判据（<60%）；deepModel 槽位移除，常规 critic 仍 GLM-flash 订阅不变
+- **高 stakes critic 回滚 v4-pro**（A/B 双跑实证）：52 目录 3 个历史难评审任务双跑 glm-5.3 vs v4-pro 单席 critic，四维评判（具体性/证据准确性/重要性/可操作性）**v4-pro 3:0 胜**——glm-5.3 胜率 0% 触发预设回滚判据（<60%）；deepModel 槽位移除，常规 critic 仍 GLM-5.3-flash 订阅不变
 - navigator 交叉核查背书：题 1 glm 卡 PASS（6/6 属实）；题 3 v4-pro 卡 PASS（含一处"锚点可疑"批评被源码反证的自纠错记录）
 - GLM-5.3 保留为 review-full 的 GLM 家族深审视角（roster 自带，非高 stakes critic 槽位）
 - 调度矩阵单测 23/23 绿（高 stakes 断言改为两平面统一 v4-pro）
@@ -51,7 +51,7 @@
 ## 0.3.2 (2026-09-02)
 
 - fix: package exports 开放 `./lib/*` 子路径——smoke.mjs 的 roster 探测此前因 `Package subpath './lib/roster.js' is not defined by "exports"` 而 FAIL（alpha.4 升级实测中发现，升级韧性流程起效）
-- 实证记录（alpha.4 + v0.3.1）：三 DSH provider 通道全部跑通——GLM-5.3-flash/GLM-5.3/kimi-k3 fast 直连 ✅；GLM-flash spawn 常驻席位 moa 全流程（任务卡→结果卡→完成通知）✅；navigator 异步内控派发 ✅；smoke 5/5 ✅
+- 实证记录（alpha.4 + v0.3.1）：三 DSH provider 通道全部跑通——GLM-5.3-flash/GLM-5.3/kimi-k3 fast 直连 ✅；GLM-5.3-flash spawn 常驻席位 moa 全流程（任务卡→结果卡→完成通知）✅；navigator 异步内控派发 ✅；smoke 5/5 ✅
 
 ## 0.3.1 (2026-09-02)
 

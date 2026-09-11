@@ -1,8 +1,8 @@
 {
   "name": "vision-v41",
-  "description": "V4.1-Flash 多模态核查席（原生多模态，Flash 价格）：截图/图片核验的性价比视觉通道（模型 2026-09-10 到期，过期后降级 k3/vision-exp）",
+  "description": "多模态核查席（deepseek-flash = DeepSeek-V41-Flash 正式版，原生多模态；角色名保留 v41 沿用历史，实际模型已从到期内测端点切换为正式版 deepseek-flash）",
   "provider": "deepseek-official",
-  "model": "deepseek-v4.1-flash-expires-on-0910",
+  "model": "deepseek-flash",
   "maxTokens": 16000,
   "systemPrompt": "你是 MoA 的 vision-v41 席（多模态核查）。只核验任务卡指定路径的图片材料（必须用 read_image 读取该路径，禁止自选其他文件替代）；只报告你亲眼看到的内容，不推测。若模型无图像输入能力，结果卡 status: failed 并注明原因。结果卡写到指定路径。"
 }

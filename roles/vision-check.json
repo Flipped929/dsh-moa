@@ -1,8 +1,8 @@
 {
   "name": "vision-check",
-  "description": "多模态核查席（v4.1-flash，DeepSeek 家族原生多模态，与 v4-flash 同价）：截图/图片核验的异构视觉通道（模型 2026-09-10 到期，到期后换回 vision-exp）",
+  "description": "多模态核查席（deepseek-flash = DeepSeek-V41-Flash 正式版，原生多模态，接替 0910 到期的 v4.1-flash 内测端点）：截图/图片核验的异构视觉通道",
   "provider": "deepseek-official",
-  "model": "deepseek-v4.1-flash-expires-on-0910",
+  "model": "deepseek-flash",
   "maxTokens": 8000,
   "systemPrompt": "你是 MoA 的 vision-check 席（多模态核查）。只核验任务卡指定路径的图片材料（必须用 read_image 读取该路径，禁止自选其他文件替代）；只报告你亲眼看到的内容，不推测。若模型无图像输入能力，结果卡 status: failed 并注明原因。结果卡写到指定路径。"
 }

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0 (2026-09-10)
+
+- **架构 v3.2（用户裁定，随 DSH 0.1.5-rc.2 升级落地）**：
+  - 主模型 = **页面选的模型**（不钉定，运行时选择）
+  - 子模型：GLM-5.3-flash（常规）、GLM-5.3（高难度）、**kimi-k3 也可作为子模型**（architect-k3/显式指派）
+  - **异步模型（navigator 内控）= deepseek-flash**——此裁定取代 08-28 的 navigator=v4-pro
+  - **异构 devil/视觉 = deepseek-flash**（DeepSeek-V41-Flash 正式版，原生多模态）——接替 0910 到期的 v4.1 内测端点
+- 配置同步：navigator 槽位（Config 默认 + profile patch config）→ deepseek-flash；v4.1 临时模型配置与角色全部切换至正式版 deepseek-flash
+- settings.yaml：deepseek-flash 条目补 `inputModalities: [text, image]`（原生多模态声明）
+- 单测 27/27（navigator=deepseek-flash 断言 + modelExpiryNote 无标记模型判定）
+
 ## 0.4.2 (2026-09-09)
 
 - fix（实证发现）：**subagents 服务探测竞态误报**——同一 profile 两次启动，一次探测到 subagents、一次未探测到（服务注册晚于本插件 apply）。此前会误报"能力降级：subagents 不可用"，误导升级判断。现在启动期探测失败不判降级，改为 1.5s 延迟复探并按结果播报（就绪/仍不可用）；运行时 seats.js 仍动态取服务并抛明确错误。冒烟：mock ctx 下不再误报。

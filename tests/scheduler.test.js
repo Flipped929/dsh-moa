@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { assignSeats, describeMatrix, isPeakHour, modelExpiryNote } from '../lib/scheduler.js';
 
-// 架构 v3.0（2026-09-09 用户裁定，moa 三席评审收敛）：主力全订阅
-// （k3 主模型 / GLM-5.3-flash 常规 / GLM-5.3 高难度执行 / v4-pro critic+navigator / v4.1 异构 devil+视觉）
-const V41 = 'deepseek-v4.1-flash-expires-on-0910';
+// 架构 v3.1（2026-09-10 用户裁定，随 DSH 0.1.5-rc.2 升级落地）：主力全订阅
+// （页面选的模型为主模型 / GLM-5.3-flash 常规 / GLM-5.3 高难度执行 / deepseek-flash 异构 devil+视觉+异步内控 navigator）
+const V41 = 'deepseek-flash';
 const roster = new Map(Object.entries({
   analyst: { name: 'analyst', provider: 'zai-coding-cn', model: 'glm-5.3-flash', systemPrompt: 'a' },
   critic: { name: 'critic', provider: 'zai-coding-cn', model: 'glm-5.3-flash', systemPrompt: 'c' },
@@ -16,7 +16,7 @@ const roster = new Map(Object.entries({
   'executor-pro': { name: 'executor-pro', provider: 'deepseek-official', model: 'deepseek-v4-pro' },
   'architect-k3': { name: 'architect-k3', provider: 'kimi-coding', model: 'k3' },
   'vision-aux': { name: 'vision-aux', provider: 'deepseek-official', model: 'deepseek-v4-flash-vision-exp' },
-  navigator: { name: 'navigator', provider: 'deepseek-official', model: 'deepseek-v4-pro' },
+  navigator: { name: 'navigator', provider: 'deepseek-official', model: 'deepseek-flash' },
 }));
 
 const resolved = {
@@ -87,7 +87,7 @@ test('角色文件自带模型的角色不被常规槽位覆盖', () => {
     ['architect-k3', 'k3', undefined],
   ]);
   const audit = assignSeats({ mode: 'audit', stakes: undefined, needVision: false, bigContextChars: 0 }, resolved, roster);
-  assert.deepEqual(audit.map((s) => [s.role, s.provider, s.model]), [['navigator', 'deepseek-official', 'deepseek-v4-pro']]);
+  assert.deepEqual(audit.map((s) => [s.role, s.provider, s.model]), [['navigator', 'deepseek-official', 'deepseek-flash']]);
 });
 
 test('review-full 为 4 席（claude 不加入席位）：GLM 双档 spawn + v4.1 异构跨家族', () => {
@@ -100,19 +100,20 @@ test('review-full 为 4 席（claude 不加入席位）：GLM 双档 spawn + v4.
   assert.equal(glm.runtime, undefined);
 });
 
-test('describeMatrix 反映 v3.0 槽位（GLM spawn 常规；v4.1 异构 devil/视觉；v4-pro critic）', () => {
+test('describeMatrix 反映 v3.2 槽位（GLM spawn 常规；deepseek-flash 异构 devil/视觉；v4-pro critic）', () => {
   const text = describeMatrix(resolved);
   assert.match(text, /常规席=zai-coding-cn\/glm-5\.3-flash/);
   assert.match(text, /高stakes critic=deepseek-official\/deepseek-v4-pro/);
-  assert.match(text, /视觉席=deepseek-official\/deepseek-v4\.1-flash-expires-on-0910/);
-  assert.match(text, /devil=deepseek-official\/deepseek-v4\.1-flash-expires-on-0910/);
-  assert.match(text, /临时模型，注意到期/);
+  assert.match(text, /视觉席=deepseek-official\/deepseek-flash/);
+  assert.match(text, /devil=deepseek-official\/deepseek-flash/);
+  assert.doesNotMatch(text, /临时模型/); // deepseek-flash 为正式版，无到期标记
 });
 
-test('modelExpiryNote：含 expires-on-MMDD 的模型给出到期/已过期提示', () => {
-  assert.equal(modelExpiryNote('deepseek-v4-pro'), null); // 无标记 → 无提示
-  assert.match(modelExpiryNote(V41, new Date('2026-09-09T02:00:00Z')) ?? '', /将于 09-10 到期/);
-  assert.match(modelExpiryNote(V41, new Date('2026-09-10T02:00:00Z')) ?? '', /已于 09-10 到期/);
+test('modelExpiryNote：含 expires-on-MMDD 的模型给出到期/已过期提示；无标记模型无提示', () => {
+  assert.equal(modelExpiryNote('deepseek-flash'), null); // 正式版无到期标记 → 无提示
+  const expiredModel = 'deepseek-v4.1-flash-expires-on-0910';
+  assert.match(modelExpiryNote(expiredModel, new Date('2026-09-09T02:00:00Z')) ?? '', /将于 09-10 到期/);
+  assert.match(modelExpiryNote(expiredModel, new Date('2026-09-10T02:00:00Z')) ?? '', /已于 09-10 到期/);
 });
 
 test('isPeakHour：周末低谷、工作日高峰窗口内外', () => {

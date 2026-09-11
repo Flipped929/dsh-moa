@@ -113,22 +113,23 @@ context_files=[...]                          # 材料白名单（工作区相对
 
 生效白名单：`name/description/provider/model/maxTokens/temperature/systemPrompt/tools/reasoningEffort/runtime`——角色只能做减法；sandbox/approval 永远继承父会话；`provider:"codex"` 自动走 codex CLI runtime（也可显式 `runtime:"codex"`）。
 
-## 模型经济学（架构 v3.0，2026-09-09 用户裁定，moa 三席评审收敛——主力全订阅）
+## 模型经济学（架构 v3.2，2026-09-10 用户裁定）
 
 | 档位 | 模型 | 通道 | 成本口径 |
 |---|---|---|---|
-| 主模型 captain（GUI/默认） | kimi-k3 | 主会话 | Allegro 年会员订阅额度 |
+| 主模型 captain | **页面选的模型**（不钉定，运行时选择） | 主会话 | 随选择 |
 | 常规/初稿/评审 | GLM-5.3-flash（**多模态**，v2.4 实证） | DSH spawn 常驻（zai-coding-cn） | coding plan Pro 订阅额度 |
 | 高难度执行/难片 | GLM-5.3（第一顺位）+ v4-pro（第二顺位 executor-pro） | spawn 常驻 / codex CLI | 订阅 + 峰谷计费 |
-| 高 stakes critic + navigator 内控 | deepseek-v4-pro | spawn 常驻 | 峰谷计费（A/B 双跑 0:3 实证 + 第三家族裁定） |
 | GLM 家族视角（review-full） | GLM-5.3 | DSH spawn 常驻（zai-coding-cn） | coding plan Pro 订阅额度 |
 | 执行（写代码/跑测试） | GLM-5.3-flash / GLM-5.3 | codex CLI（自带沙箱） | 同上 |
-| 异构 devil/视觉（跨家族） | deepseek-v4.1-flash-expires-on-0910 | spawn 常驻 | 与 v4-flash 同价；**原生多模态**；**2026-09-10 到期** → 降级预案：**视觉席→GLM-5.3-flash**（订阅+已实证多模态）、**devil→vision-exp**（保 DeepSeek 跨家族） |
-| DeepSeek 补充 | v4-flash-vision-exp（vision-aux 交叉核验辅助） | spawn 常驻 | 峰谷计费 ¥3/9（高峰=工作日 9-12/14-18），批量排低谷/周末 |
+| 子模型（可指派） | kimi-k3（多模态，architect-k3 席/显式指派） | spawn 常驻 | Allegro 年会员订阅额度 |
+| **异步内控 navigator + 异构 devil/视觉** | **deepseek-flash**（DeepSeek-V41-Flash 正式版，原生多模态，无到期限制） | spawn 常驻 | 与 v4-flash 同价（峰谷计费） |
+| 交叉核验辅助 | v4-flash-vision-exp（vision-aux） | spawn 常驻 | 峰谷计费 ¥3/9（高峰=工作日 9-12/14-18），批量排低谷/周末 |
 
 - **claude 不加入席位**（2026-09-02 用户裁定）。
 - 订阅额度耗竭降级链：k3 不可用→v4-pro；glm 不可用→v4-pro。
 - 到期提示：模型 ID 含 `expires-on-MMDD` 时 moa 返回自动输出到期/已过期提示（modelExpiryNote）。
+- 演进记录：v4.1 内测端点（expires-on-0910）已于 09-10 到期，异构/navigator 席位已切换至正式版 `deepseek-flash`；navigator 此前为 v4-pro（08-28 裁定，09-10 由本裁定取代）。
 
 ## 治理边界
 

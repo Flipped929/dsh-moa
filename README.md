@@ -7,6 +7,7 @@
 ## 适配 DSH 版本
 
 - **官方验证版本：dsh-v0.1.3-alpha.1**（2026-09-08 实证：deliverPrompt 六参派活 ✅、Session format v2 迁移后旧席位 reattach 重续接 ✅、navigator 内控 ✅）；上一验证版 0.1.2-alpha.4。开发/验证历史：0.1.2-alpha.1 / alpha.2 / alpha.3 / alpha.4 / 0.1.3-alpha.1。
+- **代码层已适配：dsh-v0.1.5-rc.2**（当前最新，2026-09-10 git show 源码逐项核对：派活符号 deliverPrompt 与六参签名不变、startContinuable/sendMessage/interrupt/listChildren/getProvider/AgentOptions 全保留、0.1.5 破坏性 API（ctx.agent/Inbox/persona 前后缀/Web 面板 Slot 迁移）dsh-moa 均未使用——**零代码适配**；运行时实证待升级后执行，注意事项见 `docs/` 与 52 目录评估报告）。
 - 最低要求：dsh-v0.1.2-alpha.1（每席位 reasoningEffort 需要该版本；更早版本自动忽略该字段）。
 - alpha.4 变动核对：持续子代理的 `report` 工具被 `send_message` 取代——本插件席位走自注册 `moa_write_card` 工具 + 结果卡协议，不受影响；宿主派活 API `followup` 被移除，改走 `Symbol.for('dsh.subagent.queuePrompt')` 内部符号通道——本插件已做跨版本兼容分派（≤alpha.3 用 followup，≥alpha.4 用符号通道），并有单测锁定；`Session.events` 被按需 API（`seq`/`eventAt()`/`snapshotEvents()`）取代——本插件未使用；Web PTC 模式默认移除 `workflow` 工具——本插件 deny 列表本就含 workflow。
 - 升级兼容按「能力自检 + 优雅降级」设计（见文末）。

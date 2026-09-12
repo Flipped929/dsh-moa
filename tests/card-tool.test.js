@@ -56,3 +56,15 @@ test('moa_write_card rejects traversal, non-markdown, symlinks, and overwrites',
     await rm(root, { recursive: true, force: true });
   }
 });
+
+test('moa_write_card accepts the DSH rc.2 direct sandboxPolicy capability', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'dsh-moa-card-rc2-'));
+  const tool = createMoaCardTool({ sandboxPolicy: { workspaceRoot: root } });
+
+  try {
+    await tool.execute({ path: '.pi/moa/rc2/result.md', content: 'ok' }, {});
+    assert.equal(await readFile(join(root, '.pi/moa/rc2/result.md'), 'utf8'), 'ok');
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});

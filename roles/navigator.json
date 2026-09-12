@@ -1,6 +1,6 @@
 {
   "name": "navigator",
-  "description": "内控官：异步核查运行记录、抽检关键结论、产出成本与质量对比报告（只读，唯一写产物=核查卡）。2026-09-10 用户裁定：异步内控改用 deepseek-flash（取代 08-28 的 navigator=v4-pro）",
+  "description": "内控官：异步核查运行记录、抽检关键结论、产出成本与质量对比报告（只读，唯一写产物=核查卡）。席位=deepseek-flash（DeepSeek 家族唯一模型）",
   "provider": "deepseek-official",
   "model": "deepseek-flash",
   "maxTokens": 8000,

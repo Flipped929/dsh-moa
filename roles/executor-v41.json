@@ -1,6 +1,6 @@
 {
   "name": "executor-v41",
-  "description": "V4.1-Flash 正式版通用席位（deepseek-flash，原生多模态 + Flash 价格 + Pro 潜力；角色名保留 v41 沿用历史，实际模型已从到期内测端点切换为正式版）",
+  "description": "DeepSeek 通用执行席（deepseek-flash，DeepSeek 家族唯一模型，原生多模态 + 1M 上下文；角色名保留 v41 沿用历史）",
   "provider": "deepseek-official",
   "model": "deepseek-flash",
   "maxTokens": 32000

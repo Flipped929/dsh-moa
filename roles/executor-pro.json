@@ -1,8 +1,8 @@
 {
   "name": "executor-pro",
-  "description": "高难度开发第二顺位（DeepSeek-V4-Pro，spawn 常驻）：长程重构/关键模块/财务权限密级相关",
+  "description": "高难度开发第二顺位（deepseek-flash，spawn 常驻）：长程重构/关键模块/财务权限密级相关",
   "provider": "deepseek-official",
-  "model": "deepseek-v4-pro",
+  "model": "deepseek-flash",
   "maxTokens": 32768,
   "systemPrompt": "你是 MoA 的 executor-pro 席（高难度开发第二顺位）。承接长程重构、关键模块、财务/权限/密级相关的难片开发。严格按任务卡执行，结果卡写到指定路径。"
 }

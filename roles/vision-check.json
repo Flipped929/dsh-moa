@@ -1,6 +1,6 @@
 {
   "name": "vision-check",
-  "description": "多模态核查席（deepseek-flash = DeepSeek-V41-Flash 正式版，原生多模态，接替 0910 到期的 v4.1-flash 内测端点）：截图/图片核验的异构视觉通道",
+  "description": "多模态核查席（deepseek-flash，DeepSeek 家族唯一模型，原生多模态）：截图/图片核验的异构视觉通道",
   "provider": "deepseek-official",
   "model": "deepseek-flash",
   "maxTokens": 8000,

@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- **架构 v3.3（2026-09-12 用户裁定）：DeepSeek 家族收敛为唯一模型 `deepseek-official/deepseek-flash`（走 DeepSeek-V4.1-flash）**——DSH 的 DeepSeek provider 现只注册这一个模型，插件内所有其它 DeepSeek 模型（v4-pro / v4-flash / v4-flash-vision-exp / v4.1 内测端点）的描述与槽位全部删除：
+  - 配置槽位：`proModel` 删除，新增 `criticModel`（默认 `deepseek-official/deepseek-flash`）；高 stakes critic 从 v4-pro 改走 `criticModel`；大上下文 devil 特判删除（devil 恒为 1M 上下文的 deepseek-flash）。
+  - 席位：`roles/executor-pro.json` 改指 deepseek-flash（保留"第二顺位复核"职能）；`roles/vision-aux.json` 改由**第二家族承担**——默认 `kimi-coding/k3`（用户层可覆盖为 `zai-coding-cn/glm-5.3-flash`），因为视觉席与 devil 现同为 deepseek-flash，该席若继续用 DeepSeek 就是同模型重复烧钱；devil / vision-check / executor-v41 / critic / navigator 的角色描述去掉退役模型表述。
+  - 文案：`moa` 工具描述、`stakes` 参数说明、codex 未挂载错误提示、峰价提示、调度矩阵头注释与 `describeMatrix` 输出、README 矩阵/架构图/模型经济学表/Roadmap、`cordis.patch.example.yml` 注释全部对齐单模型事实。
+  - 单测 28/28（新增"所有 DeepSeek 槽位=deepseek-flash 且 describeMatrix 不含 v4-pro/v4-flash/vision-exp"断言 + "vision-aux 为第二家族、不与视觉席/ devil 同模型"断言）。
+- fix: support DSH 0.1.5-rc.2's direct `ctx.sandboxPolicy` capability while retaining the older `ctx.get('sandboxPolicy')` lookup. Declare the capability in Cordis `inject`; add rc.2 result-card coverage.
+- docs: 席位构成文案对齐——`moa` 工具描述、调度矩阵注释、README 矩阵/架构图同步为「常规=GLM-5.3-flash / 高 stakes critic=criticModel（deepseek-flash）/ 异构 devil·视觉 + 异步内控 navigator=deepseek-flash / k3 作可指派子模型」。
+- docs: 明确 devil 跨家族的真实边界——默认槽位是固定模型（deepseek-flash），主模型同属 DeepSeek 家族时 devil 与主模型同族，须由主模型显式 `seats` 指派其他家族。
+- 部署侧（非仓库）：`~/.dsh/settings.yaml` 的 `subagent-model-selection.allowedModels` 收敛为 `deepseek-flash` + k3 + GLM 两档（v4-pro / v4-flash-vision-exp 两条已删）。
+
 ## 0.5.0 (2026-09-10)
 
 - **架构 v3.2（用户裁定，随 DSH 0.1.5-rc.2 升级落地）**：

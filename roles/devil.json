@@ -1,6 +1,6 @@
 {
   "name": "devil",
-  "description": "跨家族魔鬼代言人：从不同模型家族视角提出反对意见与替代假设（deepseek-flash = DeepSeek-V41-Flash 正式版，原生多模态，接替 0910 到期的 v4.1-flash 内测端点；与主模型 k3 异构）",
+  "description": "跨家族魔鬼代言人：从不同模型家族视角提出反对意见与替代假设（deepseek-flash，DeepSeek 家族唯一模型，原生多模态；主模型同属 DeepSeek 家族时需显式指派其他家族）",
   "provider": "deepseek-official",
   "model": "deepseek-flash",
   "maxTokens": 8000,

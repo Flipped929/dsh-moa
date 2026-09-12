@@ -5,7 +5,7 @@
     - id: dsh-moa
       name: 'dsh-moa'
       config:
-        # navigator（内控官）默认席位；可改 deepseek-official/deepseek-v4-pro
+        # navigator（内控官）默认席位；DeepSeek 家族只有 deepseek-flash（默认），省钱可切 kimi-coding/k3
         navigatorProvider: kimi-coding
         navigatorModel: k3
         # advisor 上下文预算（字符，failsafe）
